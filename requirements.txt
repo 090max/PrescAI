@@ -94,7 +94,7 @@ patsy==0.5.1
 pexpect==4.2.1
 pickle-mixin==1.0.2
 pickleshare==0.7.5
-Pillow==6.1.0
+Pillow==6.2.0
 plotly==4.1.1
 pocketsphinx==0.1.15
 prettytable==0.7.2
