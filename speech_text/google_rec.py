@@ -1,67 +1,115 @@
+
+# libraries used in voice recognition and web 
+
 import speech_recognition as sr
+import webbrowser as wb
 
 
-class GoogleRecognizer:
-    def recognize_speech_from_mic(self,recognizer, microphone):
-        """Transcribe speech from recorded from `microphone`.
-        Returns a dictionary with three keys:
-        "success": a boolean indicating whether or not the API request was
-                   successful
-        "error":   `None` if no error occured, otherwise a string containing
-                   an error message if the API could not be reached or
-                   speech was unrecognizable
-        "transcription": `None` if speech could not be transcribed,
-                   otherwise a string containing the transcribed text
-        """
-        # check that recognizer and microphone arguments are appropriate type
-        if not isinstance(recognizer, sr.Recognizer):
-            raise TypeError("`recognizer` must be `Recognizer` instance")
+# libraries for removing stopwards and apply part of speech tagging used in extrat function
 
-        if not isinstance(microphone, sr.Microphone):
-            raise TypeError("`microphone` must be `Microphone` instance")
+import nltk 
+from nltk.corpus import stopwords 
+from nltk.tokenize import word_tokenize, sent_tokenize, RegexpTokenizer
 
-        # adjust the recognizer sensitivity to ambient noise and record audio
-        # from the microphone
-        with microphone as source:
-            recognizer.adjust_for_ambient_noise(source)  # #  analyze the audio source for 1 second
-            audio = recognizer.listen(source)
 
-        # set up the response object
-        response = {
-            "success": True,
-            "error": None,
-            "transcription": None
-        }
+# libraries used for delay
 
-        # try recognizing the speech in the recording
-        # if a RequestError or UnknownValueError exception is caught,
-        #   update the response object accordingly
+import time
+ 
+# Making instances for recognizing the voice 
+
+r = sr.Recognizer()
+
+# Making sure that from where the Input came from
+
+def name(res_tag):
+    name = ""
+    age = ""
+    gender = ""
+    name   = [word for word, tag in tagged if tag == 'NNP']
+    age    = [integer for word, tag in tagged if tag == 'CD']
+    gender = [gen for word, tag in tagged if tag == 'NN']
+    
+'''def symptoms(res_tag):
+    
+
+def diagnosis(res_tag):
+    
+    
+def prescription(res_tag):
+    
+
+def advice(res_tag):'''
+
+    
+
+def extract(res):
+    
+    stop_words = set(stopwords.words('english')) 
+    
+    tokenized = sent_tokenize(res)       
+    
+    wordsList = nltk.word_tokenize(res) 
+  
+    # removing stop words from wordList 
+    wordsList = [w for w in wordsList if not w in stop_words]  
+  
+    #  Using a Tagger. Which is part-of-speech  
+    # tagger or POS-tagger.  
+    tagged = nltk.pos_tag(wordsList) 
+  
+    print(tagged) 
+    return tagged
+    
+def mainfunction(source):
+    
+    time.sleep(3)
+    print("Speak Now...")
+    
+    audio = r.listen(source)
+    
+    res = ""
+    res = r.recognize_google(audio)
+    
+    res_tag = extract(res)
+    
+    if 'name' in res or 'Name' in res:
+        name(res_tag)
+    
+    elif 'symptom' in res or 'symptoms' in res:
+        symptoms(res_tag)
+    
+    elif 'diagnosis' in res or 'Diagnosis' in res:
+        diagnosis(res_tag)
+    
+    elif 'prescription' in res or 'Prescription' in res:
+        prescription(res_tag)
+    
+    elif 'advice' in res or 'Advice' in res:
+        advice(res_tag)
+    
+
+with sr.Microphone() as source:
+    
+    while 1:
+        mainfunction(source)
+
+# Now converting audio signal recorded into text using API(recognize_google)
+
+'''if 'Youtube' or 'youtube' in hello:
+    url = 'https://www.youtube.com/'
+    url = url + 'results?search_query=garmi'
+    with sr.Microphone() as source:s
+        print('Serach Your Query')
+        audio = r2.listen(source)
+        
         try:
-            response["transcription"] = recognizer.recognize_google(audio, language="en-IN")
-        except sr.RequestError:
-            # API was unreachable or unresponsive
-            response["success"] = False
-            response["error"] = "API unavailable/unresponsive"
+            get = r2.recognize_google(audio)
+            print(get)
+            wb.get().open_new(url+get)
+        
         except sr.UnknownValueError:
-            # speech was unintelligible
-            response["error"] = "Unable to recognize speech"
-
-        return response
-
-    def get_mic(self):
-        mic = sr.Microphone(device_index=0)
-        return mic
-
-    def get_response(self):
-        recognizer = sr.Recognizer()
-        mic=self.get_mic()
-        response = self.recognize_speech_from_mic(recognizer, mic)
-        return response['transcription']
-
-if __name__ == "__main__":
-    converter=GoogleRecognizer()
-    resp=converter.get_response()
-    if(resp is not None):
-        print(resp)
-    else:
-        print("error occured")
+            print('error')
+       
+        except sr.RequestError as e:
+            print('failed'.format(e))'''
