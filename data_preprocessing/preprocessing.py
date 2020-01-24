@@ -1,7 +1,7 @@
 import nltk
 import sys
 sys.path.append('..')
-from speech_text.google_rec import GoogleRecognizer
+# from speech_text.google_rec import GoogleRecognizer
 
 def preprocess(string):
     
@@ -22,7 +22,7 @@ def preprocess(string):
     for i in range(len(useful_words)):
         important_words.append(ps.stem(useful_words[i]))
         
-    ## Lemmatization
+    # Lemmatization
     final_words=[]
     from nltk.stem import WordNetLemmatizer
     wn = WordNetLemmatizer()
@@ -31,14 +31,26 @@ def preprocess(string):
             
     return final_words
 
+string2 = "Narendra Modi is prime minister of India"
+string=preprocess(string2)
+print(string)
+# from nltk.tokenize import RegexpTokenizer
+# tokenizer = RegexpTokenizer("[a-zA-Z@0-9]+")
+# word_list=tokenizer.tokenize(string)
+# #output = preprocess(string)
+# final_token=[]
+# final_token.append(" ".join(word_list))
+# print(final_token[0])
+# print(nltk.pos_tag(word_list))
 
-converter=GoogleRecognizer()
-resp=converter.get_response()
-if(resp is not None):
-    print(resp)
-    output=preprocess(resp)
-    print(output)
-else:
-    print("error occured")
+
+#converter=GoogleRecognizer()
+# resp=converter.get_response()
+# if(resp is not None):
+#     print(resp)
+#     output=preprocess(resp)
+#     print(output)
+# else:
+#     print("error occured")
 
 
