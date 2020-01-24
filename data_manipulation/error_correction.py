@@ -12,6 +12,6 @@ def func(word):
 
     return output
 
-word="fuck me harder"
+word="lung cncer"
 ans = func(word)
 print(ans)
