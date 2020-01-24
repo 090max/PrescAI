@@ -5,14 +5,14 @@ sys.path.append('..')
 import spacy
 
 spacy_nlp_sci = spacy.load('en_core_sci_md')
-spacy_nlp_en = spacy.load('en')
+spacy_nlp_en = spacy.load('en_core_web_sm')
 
 
 def Remove_stopwords(string):
     # tokenizing
     from nltk.tokenize import RegexpTokenizer
     tokenizer = RegexpTokenizer("[a-zA-Z@0-9]+")
-    word_list = tokenizer.tokenize(string.lower())
+    word_list = tokenizer.tokenize(string)
 
     # stopword removal
     from nltk.corpus import stopwords
@@ -34,7 +34,7 @@ def process_cont(tokenized):
 
 
 def get_pos_tags_en(text, rem_stopwords=1):
-    final_text = text.lower()
+    final_text = text
     if (rem_stopwords == 1):
         processed_text = Remove_stopwords(text)
         final_text = " ".join(processed_text)
@@ -45,7 +45,7 @@ def get_pos_tags_en(text, rem_stopwords=1):
 
 
 def get_pos_tags_sci(text, rem_stopwords=1):
-    final_text = text.lower()
+    final_text = text
     if (rem_stopwords == 1):
         processed_text = Remove_stopwords(text)
         final_text = " ".join(processed_text)
@@ -55,12 +55,30 @@ def get_pos_tags_sci(text, rem_stopwords=1):
     return arr, named_entity
 
 
-def sypmptom(text):
+def name(text):
+    arr, named_entity = get_pos_tags_sci(text)
+    not_require = ["name", "patients", "patient", "age", "gender", "sex", "years", "old"]
+    pname=[]
+
+    for i in range(len(arr)):
+        if arr[i][1] == "CD":
+            age = arr[i][0]
+        elif arr[i][0] == "male" or arr[i][0] == "female" or arr[i][0] == "others":
+            gender = arr[i][0]
+        else:
+            if(arr[i][1] == "NNP" and arr[i][0] not in not_require):
+                pname.append(arr[i][0])
+
+    fname=" ".join(pname)
+
+    print(fname, age, gender)
+    return fname, age, gender
+
+
+def symptom(text):
 
     arr,named_entity=get_pos_tags_sci(text)
-    print(arr)
-    print(named_entity)
-
+    print(arr,named_entity)
     dict = {}
     sym = []
     duration = []
@@ -82,14 +100,30 @@ def sypmptom(text):
         else:
             sym.append(named_entity[i][0])
 
+    sym = " ".join(sym)
+    duration = " ".join(duration)
     print(sym, duration)
     return sym, duration
 
+def diagnosis(text):
+    arr, named_entity = get_pos_tags_sci(text)
+    diag=[]
+    not_require = ["name", "patients", "patient", "age", "gender", "sex", "years", "old"]
+    for i in range(len(named_entity)):
+        if named_entity[i][0] not in not_require:
+            diag.append(named_entity[i][0])
 
-def prescription(text):
-    arr,named_entity=get_pos_tags_sci(text,1)
-    print(named_entity)
+    diag = " ".join(diag)
+    print(diag)
+    return diag
 
 
-sample_text = "high fever since yesterday"
-sypmptom(sample_text)
+name_text = "patient name is Nikhil Sharma he is a male and his age is 30"
+name(name_text)
+
+symptom_text = "patient is suffering from fever"
+symptom(symptom_text)
+
+diagnosis_text = "patient is suffering from acute bronchitis"
+diagnosis(diagnosis_text)
+
