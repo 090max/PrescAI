@@ -23,7 +23,7 @@ class GoogleRecognizer:
         # adjust the recognizer sensitivity to ambient noise and record audio
         # from the microphone
         with microphone as source:
-            recognizer.adjust_for_ambient_noise(source)  # #  analyze the audio source for 1 second
+            # recognizer.adjust_for_ambient_noise(source)  # #  analyze the audio source for 1 second
             audio = recognizer.listen(source)
 
         # set up the response object
