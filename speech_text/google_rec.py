@@ -1,67 +1,174 @@
+
+# libraries used in voice recognition and web 
+
 import speech_recognition as sr
+import webbrowser as wb
 
+# libraries used for delay
 
-class GoogleRecognizer:
-    def recognize_speech_from_mic(self,recognizer, microphone):
-        """Transcribe speech from recorded from `microphone`.
-        Returns a dictionary with three keys:
-        "success": a boolean indicating whether or not the API request was
-                   successful
-        "error":   `None` if no error occured, otherwise a string containing
-                   an error message if the API could not be reached or
-                   speech was unrecognizable
-        "transcription": `None` if speech could not be transcribed,
-                   otherwise a string containing the transcribed text
-        """
-        # check that recognizer and microphone arguments are appropriate type
-        if not isinstance(recognizer, sr.Recognizer):
-            raise TypeError("`recognizer` must be `Recognizer` instance")
+import time
+ 
+# Making instances for recognizing the voice 
 
-        if not isinstance(microphone, sr.Microphone):
-            raise TypeError("`microphone` must be `Microphone` instance")
+r = sr.Recognizer()
 
+<<<<<<< HEAD
         # adjust the recognizer sensitivity to ambient noise and record audio
         # from the microphone
         with microphone as source:
             # recognizer.adjust_for_ambient_noise(source)  # #  analyze the audio source for 1 second
             audio = recognizer.listen(source)
+=======
+# Making sure that from where the Input came from
+>>>>>>> 36588693f7817964bc5857f5d0625ff5dc9ba6a0
 
-        # set up the response object
-        response = {
-            "success": True,
-            "error": None,
-            "transcription": None
+def name():
+    with sr.Microphone() as source:
+        print("enter the name\n")
+        sym = r.listen(source)
+        time.sleep(2)
+    result = r.recognize_google(sym)
+    data['name'].append(result)
+    print(data)
+    mainfunction()
+    
+def symptoms():
+    check=""
+    while True:
+        r = sr.Recognizer()
+        if(len(check)==0):
+            print("BEGIN...\n")
+        
+        with sr.Microphone() as source:
+            print("enter the symptoms\n")
+            sym = r.listen(source)
+            time.sleep(2)
+        result = r.recognize_google(sym)
+        check = result.lower()
+                
+        if 'exit' in check:
+            mainfunction()
+            break
+        else:
+            data['symptoms'].append(result)
+            print(data)
+            
+def diagnosis():
+    check=""
+    while True:
+        r = sr.Recognizer()
+        if(len(check)==0):
+            print("BEGIN...\n")
+        
+        with sr.Microphone() as source:
+            print("enter the diagnosis\n")
+            sym = r.listen(source)
+            time.sleep(2)
+        result = r.recognize_google(sym)
+        check = result.lower()
+                
+        if 'exit' in check:
+            mainfunction()
+            break
+        else:
+            data['diagnosis'].append(result)
+            print(data)
+    
+    
+def prescription():
+    check=""
+    while True:
+        r = sr.Recognizer()
+        if(len(check)==0):
+            print("BEGIN...\n")
+        
+        with sr.Microphone() as source:
+            print("enter the prescription\n")
+            sym = r.listen(source)
+            time.sleep(2)
+        result = r.recognize_google(sym)
+        check = result.lower()
+                
+        if 'exit' in check:
+            mainfunction()
+            break
+        else:
+            data['prescription'].append(result)
+            print(data)
+    
+
+def advice():
+    check=""
+    while True:
+        r = sr.Recognizer()
+        if(len(check)==0):
+            print("BEGIN...\n")
+        
+        with sr.Microphone() as source:
+            print("enter the advice\n")
+            sym = r.listen(source)
+            time.sleep(2)
+        result = r.recognize_google(sym)
+        check = result.lower()
+                
+        if 'exit' in check:
+            mainfunction()
+            break
+        else:
+            data['advice'].append(result)
+            print(data)
+
+    
+def mainfunction():
+    print("What do you want to Enter:\n" + "Name\n" + "Symptoms\n" + "Diagnosis\n" + "Prescription\n" + "Advice\n")
+    with sr.Microphone() as source:
+        audio = r.listen(source)
+    res = r.recognize_google(audio)
+    res = res.lower()
+    keywords(res)
+    
+    
+def keywords(key):    
+    if 'name' in key:
+        name()
+    
+    elif 'symptom' in key:
+        key = symptoms()
+        
+    elif 'diagnosis' in key:
+        diagnosis()
+    
+    elif 'prescription' in key:
+        prescription()
+    
+    elif 'advice' in key:
+        advice()
+    
+data = {'name': [],
+        'symptoms': [],
+        'diagnosis': [],
+        'prescription': [],
+        'advice': []
         }
 
-        # try recognizing the speech in the recording
-        # if a RequestError or UnknownValueError exception is caught,
-        #   update the response object accordingly
+mainfunction()
+
+# Now converting audio signal recorded into text using API(recognize_google)
+
+'''if 'Youtube' or 'youtube' in hello:
+    url = 'https://www.youtube.com/'
+    url = url + 'results?search_query=garmi'
+    with sr.Microphone() as source:s
+        print('Serach Your Query')
+        audio = r2.listen(source)
+        
         try:
-            response["transcription"] = recognizer.recognize_google(audio, language="en-IN")
-        except sr.RequestError:
-            # API was unreachable or unresponsive
-            response["success"] = False
-            response["error"] = "API unavailable/unresponsive"
+            get = r2.recognize_google(audio)
+            print(get)
+            wb.get().open_new(url+get)
+        
         except sr.UnknownValueError:
-            # speech was unintelligible
-            response["error"] = "Unable to recognize speech"
-
-        return response
-
-    def get_mic(self):
-        mic = sr.Microphone(device_index=0)
-        return mic
-
-    def get_response(self):
-        recognizer = sr.Recognizer()
-        mic=self.get_mic()
-        response = self.recognize_speech_from_mic(recognizer, mic)
-        return response['transcription']
-
-if __name__ == "__main__":
-    converter=GoogleRecognizer()
-    resp=converter.get_response()
-    if(resp is not None):
-        print(resp)
-    else:
-        print("error occured")
+            print('error')
+       
+        except sr.RequestError as e:
+            print('failed'.format(e))'''
