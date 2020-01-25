@@ -4,14 +4,6 @@
 import speech_recognition as sr
 import webbrowser as wb
 
-
-# libraries for removing stopwards and apply part of speech tagging used in extrat function
-
-import nltk 
-from nltk.corpus import stopwords 
-from nltk.tokenize import word_tokenize, sent_tokenize, RegexpTokenizer
-
-
 # libraries used for delay
 
 import time
@@ -22,77 +14,136 @@ r = sr.Recognizer()
 
 # Making sure that from where the Input came from
 
-def name(res_tag):
-    name = ""
-    age = ""
-    gender = ""
-    name   = [word for word, tag in tagged if tag == 'NNP']
-    age    = [integer for word, tag in tagged if tag == 'CD']
-    gender = [gen for word, tag in tagged if tag == 'NN']
+def name():
+    with sr.Microphone() as source:
+        print("enter the name\n")
+        sym = r.listen(source)
+        time.sleep(2)
+    result = r.recognize_google(sym)
+    data['name'].append(result)
+    print(data)
+    mainfunction()
     
-'''def symptoms(res_tag):
+def symptoms():
+    check=""
+    while True:
+        r = sr.Recognizer()
+        if(len(check)==0):
+            print("BEGIN...\n")
+        
+        with sr.Microphone() as source:
+            print("enter the symptoms\n")
+            sym = r.listen(source)
+            time.sleep(2)
+        result = r.recognize_google(sym)
+        check = result.lower()
+                
+        if 'exit' in check:
+            mainfunction()
+            break
+        else:
+            data['symptoms'].append(result)
+            print(data)
+            
+def diagnosis():
+    check=""
+    while True:
+        r = sr.Recognizer()
+        if(len(check)==0):
+            print("BEGIN...\n")
+        
+        with sr.Microphone() as source:
+            print("enter the diagnosis\n")
+            sym = r.listen(source)
+            time.sleep(2)
+        result = r.recognize_google(sym)
+        check = result.lower()
+                
+        if 'exit' in check:
+            mainfunction()
+            break
+        else:
+            data['diagnosis'].append(result)
+            print(data)
+    
+    
+def prescription():
+    check=""
+    while True:
+        r = sr.Recognizer()
+        if(len(check)==0):
+            print("BEGIN...\n")
+        
+        with sr.Microphone() as source:
+            print("enter the prescription\n")
+            sym = r.listen(source)
+            time.sleep(2)
+        result = r.recognize_google(sym)
+        check = result.lower()
+                
+        if 'exit' in check:
+            mainfunction()
+            break
+        else:
+            data['prescription'].append(result)
+            print(data)
     
 
-def diagnosis(res_tag):
-    
-    
-def prescription(res_tag):
-    
+def advice():
+    check=""
+    while True:
+        r = sr.Recognizer()
+        if(len(check)==0):
+            print("BEGIN...\n")
+        
+        with sr.Microphone() as source:
+            print("enter the advice\n")
+            sym = r.listen(source)
+            time.sleep(2)
+        result = r.recognize_google(sym)
+        check = result.lower()
+                
+        if 'exit' in check:
+            mainfunction()
+            break
+        else:
+            data['advice'].append(result)
+            print(data)
 
-def advice(res_tag):'''
-
     
-
-def extract(res):
-    
-    stop_words = set(stopwords.words('english')) 
-    
-    tokenized = sent_tokenize(res)       
-    
-    wordsList = nltk.word_tokenize(res) 
-  
-    # removing stop words from wordList 
-    wordsList = [w for w in wordsList if not w in stop_words]  
-  
-    #  Using a Tagger. Which is part-of-speech  
-    # tagger or POS-tagger.  
-    tagged = nltk.pos_tag(wordsList) 
-  
-    print(tagged) 
-    return tagged
-    
-def mainfunction(source):
-    
-    time.sleep(3)
-    print("Speak Now...")
-    
-    audio = r.listen(source)
-    
-    res = ""
+def mainfunction():
+    print("What do you want to Enter:\n" + "Name\n" + "Symptoms\n" + "Diagnosis\n" + "Prescription\n" + "Advice\n")
+    with sr.Microphone() as source:
+        audio = r.listen(source)
     res = r.recognize_google(audio)
+    res = res.lower()
+    keywords(res)
     
-    res_tag = extract(res)
     
-    if 'name' in res or 'Name' in res:
-        name(res_tag)
+def keywords(key):    
+    if 'name' in key:
+        name()
     
-    elif 'symptom' in res or 'symptoms' in res:
-        symptoms(res_tag)
+    elif 'symptom' in key:
+        key = symptoms()
+        
+    elif 'diagnosis' in key:
+        diagnosis()
     
-    elif 'diagnosis' in res or 'Diagnosis' in res:
-        diagnosis(res_tag)
+    elif 'prescription' in key:
+        prescription()
     
-    elif 'prescription' in res or 'Prescription' in res:
-        prescription(res_tag)
+    elif 'advice' in key:
+        advice()
     
-    elif 'advice' in res or 'Advice' in res:
-        advice(res_tag)
-    
+data = {'name': [],
+        'symptoms': [],
+        'diagnosis': [],
+        'prescription': [],
+        'advice': []
+        }
 
-with sr.Microphone() as source:
-    
-    while 1:
-        mainfunction(source)
+mainfunction()
 
 # Now converting audio signal recorded into text using API(recognize_google)
 
