@@ -7,6 +7,7 @@ import webbrowser as wb
 # libraries used for delay
 
 import time
+import sys
  
 # Making instances for recognizing the voice 
 
@@ -17,9 +18,10 @@ r = sr.Recognizer()
 def name():
     with sr.Microphone() as source:
         print("enter the name\n")
-        sym = r.listen(source)
-        time.sleep(2)
+        sym = r.listen(source, phrase_time_limit = 5)
+        print(sym)
     result = r.recognize_google(sym)
+    print(result)
     data['name'].append(result)
     print(data)
     mainfunction()
@@ -33,8 +35,7 @@ def symptoms():
         
         with sr.Microphone() as source:
             print("enter the symptoms\n")
-            sym = r.listen(source)
-            time.sleep(2)
+            sym = r.listen(source, phrase_time_limit = 5)
         result = r.recognize_google(sym)
         check = result.lower()
                 
@@ -54,8 +55,7 @@ def diagnosis():
         
         with sr.Microphone() as source:
             print("enter the diagnosis\n")
-            sym = r.listen(source)
-            time.sleep(2)
+            sym = r.listen(source, phrase_time_limit = 5)
         result = r.recognize_google(sym)
         check = result.lower()
                 
@@ -76,8 +76,7 @@ def prescription():
         
         with sr.Microphone() as source:
             print("enter the prescription\n")
-            sym = r.listen(source)
-            time.sleep(2)
+            sym = r.listen(source, phrase_time_limit = 5)
         result = r.recognize_google(sym)
         check = result.lower()
                 
@@ -98,8 +97,7 @@ def advice():
         
         with sr.Microphone() as source:
             print("enter the advice\n")
-            sym = r.listen(source)
-            time.sleep(2)
+            sym = r.listen(source, phrase_time_limit = 5)
         result = r.recognize_google(sym)
         check = result.lower()
                 
@@ -112,9 +110,9 @@ def advice():
 
     
 def mainfunction():
-    print("What do you want to Enter:\n" + "Name\n" + "Symptoms\n" + "Diagnosis\n" + "Prescription\n" + "Advice\n")
+    print("What do you want to Enter:\n" + "Name\n" + "Symptoms\n" + "Diagnosis\n" + "Prescription\n" + "Advice\n" + "Stop : To Stop the program\n")
     with sr.Microphone() as source:
-        audio = r.listen(source)
+        audio = r.listen(source, phrase_time_limit = 3, timeout = 3)
     res = r.recognize_google(audio)
     res = res.lower()
     keywords(res)
@@ -136,6 +134,9 @@ def keywords(key):
     elif 'advice' in key:
         advice()
     
+    elif 'stop' in key:
+        sys.exit()
+    
 data = {'name': [],
         'symptoms': [],
         'diagnosis': [],
@@ -145,22 +146,3 @@ data = {'name': [],
 
 mainfunction()
 
-# Now converting audio signal recorded into text using API(recognize_google)
-
-'''if 'Youtube' or 'youtube' in hello:
-    url = 'https://www.youtube.com/'
-    url = url + 'results?search_query=garmi'
-    with sr.Microphone() as source:s
-        print('Serach Your Query')
-        audio = r2.listen(source)
-        
-        try:
-            get = r2.recognize_google(audio)
-            print(get)
-            wb.get().open_new(url+get)
-        
-        except sr.UnknownValueError:
-            print('error')
-       
-        except sr.RequestError as e:
-            print('failed'.format(e))'''
