@@ -32,6 +32,7 @@ def process_cont(tokenized):
     except Exception as e:
         print(str(e))
 
+
 def chinking_list(list, entity_list, pos_tags):
     unused_words = []
     final_list = []
@@ -47,7 +48,6 @@ def chinking_list(list, entity_list, pos_tags):
             final_entity_list.append(entity_list[i])
 
     return final_list, final_entity_list
-
 
 
 def get_pos_tags_en(text, rem_stopwords=1):
@@ -71,32 +71,59 @@ def get_pos_tags_sci(text, rem_stopwords=1):
     named_entity = [(w.text, w.label_) for w in words.ents]
     return arr, named_entity
 
+def prescription_processor(data):
+    name=""
+    quantity=[]#combination of quantity and unit
+    dosage=[]
+    number_of_days=""
+
+    for key,value in data.items():
+        if(key=="drug_name"):
+            name=value
+        elif(key=="quantity"):
+            quantity.append(value)
+        elif(key=="unit"):
+            quantity.append(value)
+        elif(key=="drug_quantity"):
+            if(len(value)!=0):
+                for idx in range(len(value)):
+                    if(len(data["frequency"])>idx):
+                        dosage.append(str(value[idx])+" "+data["frequency"][idx])
+        elif(key=="frequency"):
+            if(len(data["drug_quantity"])==0):
+                dosage.append(value[0])
+        elif(key=="duration"):
+            number_of_days=value
+
+    return(name," ".join(str(v) for v in quantity),",".join(str(v) for v in dosage),number_of_days)
+
+
 
 def name(text):
     arr, named_entity = get_pos_tags_sci(text)
     not_require = ["name", "patients", "patient", "age", "gender", "sex", "years", "old"]
-    pname=[]
-    age=""
-    gender=""
+    pname = []
+    age = ""
+    gender = ""
     for i in range(len(arr)):
         if arr[i][1] == "CD":
             age = arr[i][0]
         elif arr[i][0] == "male" or arr[i][0] == "female" or arr[i][0] == "others":
             gender = arr[i][0]
         else:
-            if(arr[i][1] == "NNP" and arr[i][0] not in not_require):
+            if (arr[i][1] == "NNP" and arr[i][0] not in not_require):
                 pname.append(arr[i][0])
 
-    fname=" ".join(pname)
+    fname = " ".join(pname)
 
     print(fname, age, gender)
     return fname, age, gender
 
-#TODO --- dataset se value uthani h
-def symptom(text):
 
-    arr,named_entity=get_pos_tags_sci(text)
-    print(arr,named_entity)
+# TODO --- dataset se value uthani h
+def symptom(text):
+    arr, named_entity = get_pos_tags_sci(text)
+    print(arr, named_entity)
     dict = {}
     sym = []
     duration = []
@@ -123,11 +150,12 @@ def symptom(text):
     print(sym, duration)
     return sym, duration
 
+
 def diagnosis(text):
     init_arr, init_named_entity = get_pos_tags_sci(text)
-    arr,named_entity=chinking_list(init_arr,init_named_entity,["VBG","VB"])
-    print(arr,named_entity)
-    diag=[]
+    arr, named_entity = chinking_list(init_arr, init_named_entity, ["VBG", "VB"])
+    print(arr, named_entity)
+    diag = []
     not_require = ["name", "patients", "patient", "age", "gender", "sex", "years", "old"]
     for i in range(len(named_entity)):
         if named_entity[i][0] not in not_require:
@@ -137,7 +165,8 @@ def diagnosis(text):
     print(diag)
     return diag
 
-#TODO add advice to the prescription
+
+# TODO add advice to the prescription
 def prescription(text):
     init_arr, init_named_entity = get_pos_tags_sci(text, 0)
     arr, named_entity = chinking_list(init_arr, init_named_entity, ["PRP", "VBP", "VB", "TO"])
@@ -149,8 +178,8 @@ def prescription(text):
     frequency_notifiers = ["times", "time"]
     food_details = ["before", "after"]
     time_details = ["hour", "hours", "minutes", "minute", "seconds", "seconds"]
-    fixed_freq=["daily","monthly","weekly","yearly"]
-    day_time=["morning","evening","afternoon","before bed","night"]
+    fixed_freq = ["daily", "monthly", "weekly", "yearly"]
+    day_time = ["morning", "evening", "afternoon", "before bed", "night"]
 
     data = {
         "drug_name": "",  # Name of the drug
@@ -161,7 +190,7 @@ def prescription(text):
         "duration": ""  # For how many days
     }
     for i in range(len(named_entity)):
-        if (named_entity[i][1] == 'ENTITY' and named_entity[i][0] not in drug_quantity and named_entity[i][0] not in time_list and named_entity[i][0] not in quantity):
+        if (named_entity[i][1] == 'ENTITY' and named_entity[i][0] not in drug_quantity and named_entity[i][ 0] not in time_list and named_entity[i][0] not in quantity):
             if (len(data["drug_name"]) == 0):
                 data["drug_name"] = str(named_entity[i][0])
     i = 0
@@ -214,14 +243,14 @@ def prescription(text):
                     elif (arr[i - 1][1] == "DT"):
                         data["duration"] = str("1") + " " + str(arr[i][0])
 
-            elif(arr[i][0] in day_time):
+            elif (arr[i][0] in day_time):
                 data["frequency"].append(arr[i][0])
 
         elif (arr[i][1] == "RB" or arr[i][1] == "VBD" and arr[i][0] not in drug_quantity):
             if (len(data["frequency"]) >= 0):
                 freq = arr[i][0]
                 freq_time = ""
-                if(arr[i][0] not in fixed_freq):
+                if (arr[i][0] not in fixed_freq):
                     # now finding time
                     idx = i + 1
                     while (idx < len(arr) and arr[idx][1] != "IN" or arr[idx][1] != "CD"):
@@ -233,8 +262,8 @@ def prescription(text):
 
                 data["frequency"].append(freq + " " + freq_time)
         i = i + 1
-    print(data)
-
+    return(prescription_processor(data))
+    # return prescription_data_processor(data)
 
 
 # name_text = "patient name is nikhil sharma he is a male and his age is 30"
@@ -246,5 +275,5 @@ def prescription(text):
 # diagnosis_text = "patient is suffering from acute bronchitis"
 # diagnosis(diagnosis_text)
 
-prescription_text="axithromycin 500 mg 5 spoons daily for 3 days"
+prescription_text = "take 2 tablets of azithromycin 500 mg in morning and 1 tablet in night for 3 days"
 prescription(prescription_text)
