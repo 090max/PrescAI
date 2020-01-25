@@ -12,15 +12,6 @@ import time
 
 r = sr.Recognizer()
 
-<<<<<<< HEAD
-        # adjust the recognizer sensitivity to ambient noise and record audio
-        # from the microphone
-        with microphone as source:
-            # recognizer.adjust_for_ambient_noise(source)  # #  analyze the audio source for 1 second
-            audio = recognizer.listen(source)
-=======
-# Making sure that from where the Input came from
->>>>>>> 36588693f7817964bc5857f5d0625ff5dc9ba6a0
 
 def name():
     with sr.Microphone() as source:

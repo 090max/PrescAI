@@ -150,12 +150,14 @@ def prescription(text):
     food_details = ["before", "after"]
     time_details = ["hour", "hours", "minutes", "minute", "seconds", "seconds"]
     fixed_freq=["daily","monthly","weekly","yearly"]
+    day_time=["morning","evening","afternoon","before bed","night"]
+
     data = {
         "drug_name": "",  # Name of the drug
         "quantity": "",  # The quantity of the prescribed drug
         "unit": "",  # the unit of drug ..mg ,ml
-        "drug_quantity": "",  # quantity of tablets or spoons
-        "frequency": "",  # How many times a day
+        "drug_quantity": [],  # quantity of tablets or spoons
+        "frequency": [],  # How many times a day
         "duration": ""  # For how many days
     }
     for i in range(len(named_entity)):
@@ -172,13 +174,13 @@ def prescription(text):
                     if (len(data["quantity"]) == 0):
                         data["quantity"] = arr[i - 1][0]
             elif (arr[i][0] in drug_quantity):
-                if (len(data["drug_quantity"]) == 0):
+                if (len(data["drug_quantity"]) >= 0):
                     type = ""
                     quant = ""
                     type = str(arr[i][0])
                     if (arr[i - 1][1] == "CD"):
                         quant = arr[i - 1][0]
-                    data["drug_quantity"] = str(quant) + " " + str(type)
+                    data["drug_quantity"].append(str(quant) + " " + str(type))
 
             elif (arr[i][0] in frequency_notifiers):
                 if (len(data["frequency"]) == 0):
@@ -212,8 +214,11 @@ def prescription(text):
                     elif (arr[i - 1][1] == "DT"):
                         data["duration"] = str("1") + " " + str(arr[i][0])
 
+            elif(arr[i][0] in day_time):
+                data["frequency"].append(arr[i][0])
+
         elif (arr[i][1] == "RB" or arr[i][1] == "VBD" and arr[i][0] not in drug_quantity):
-            if (len(data["frequency"]) == 0):
+            if (len(data["frequency"]) >= 0):
                 freq = arr[i][0]
                 freq_time = ""
                 if(arr[i][0] not in fixed_freq):
@@ -226,20 +231,20 @@ def prescription(text):
                             break
                         idx = idx + 1
 
-                data["frequency"] = freq + " " + freq_time
+                data["frequency"].append(freq + " " + freq_time)
         i = i + 1
     print(data)
 
 
 
-name_text = "patient name is Nikhil Sharma he is a male and his age is 30"
-name(name_text)
+# name_text = "patient name is nikhil sharma he is a male and his age is 30"
+# name(name_text)
+#
+# symptom_text = "he is suffering from fever"
+# symptom(symptom_text)
+#
+# diagnosis_text = "patient is suffering from acute bronchitis"
+# diagnosis(diagnosis_text)
 
-symptom_text = "patient is suffering from fever"
-symptom(symptom_text)
-
-diagnosis_text = "patient is suffering from acute bronchitis"
-diagnosis(diagnosis_text)
-
-prescription_text="paracetamol 250 mg twice a day daily for a week"
+prescription_text="axithromycin 500 mg 5 spoons daily for 3 days"
 prescription(prescription_text)
