@@ -71,36 +71,39 @@ def get_pos_tags_sci(text, rem_stopwords=1):
     named_entity = [(w.text, w.label_) for w in words.ents]
     return arr, named_entity
 
+
 def prescription_processor(data):
-    name=""
-    quantity=[]#combination of quantity and unit
-    dosage=[]
-    number_of_days=""
+    name = ""
+    quantity = []  # combination of quantity and unit
+    dosage = []
+    number_of_days = ""
 
-    for key,value in data.items():
-        if(key=="drug_name"):
-            name=value
-        elif(key=="quantity"):
+    for key, value in data.items():
+        if (key == "drug_name"):
+            name = value
+        elif (key == "quantity"):
             quantity.append(value)
-        elif(key=="unit"):
+        elif (key == "unit"):
             quantity.append(value)
-        elif(key=="drug_quantity"):
-            if(len(value)!=0):
+        elif (key == "drug_quantity"):
+            if (len(value) != 0):
                 for idx in range(len(value)):
-                    if(len(data["frequency"])>idx):
-                        dosage.append(str(value[idx])+" "+data["frequency"][idx])
-        elif(key=="frequency"):
-            if(len(data["drug_quantity"])==0):
+                    if (len(data["frequency"]) > idx):
+                        dosage.append(str(value[idx]) + " " + data["frequency"][idx])
+        elif (key == "frequency"):
+            if (len(data["drug_quantity"]) == 0):
                 dosage.append(value[0])
-        elif(key=="duration"):
-            number_of_days=value
+        elif (key == "duration"):
+            number_of_days = value
 
-    return(name," ".join(str(v) for v in quantity),",".join(str(v) for v in dosage),number_of_days)
-
+    return (name, " ".join(str(v) for v in quantity), ",".join(str(v) for v in dosage), number_of_days)
 
 
 def name(text):
+    if ("name" in text):
+        text = text.replace("name", " ").strip()
     arr, named_entity = get_pos_tags_sci(text)
+    print(arr, named_entity)
     not_require = ["name", "patients", "patient", "age", "gender", "sex", "years", "old"]
     pname = []
     age = ""
@@ -120,7 +123,7 @@ def name(text):
     return fname, age, gender
 
 
-# TODO --- dataset se value uthani h
+
 def symptom(text):
     arr, named_entity = get_pos_tags_sci(text)
     print(arr, named_entity)
@@ -166,8 +169,9 @@ def diagnosis(text):
     return diag
 
 
-# TODO add advice to the prescription
 def prescription(text):
+    if ("prescription" in text):
+        text = text.replace("prescription", " ").strip()
     init_arr, init_named_entity = get_pos_tags_sci(text, 0)
     arr, named_entity = chinking_list(init_arr, init_named_entity, ["PRP", "VBP", "VB", "TO"])
     print(arr, named_entity)
@@ -190,7 +194,8 @@ def prescription(text):
         "duration": ""  # For how many days
     }
     for i in range(len(named_entity)):
-        if (named_entity[i][1] == 'ENTITY' and named_entity[i][0] not in drug_quantity and named_entity[i][ 0] not in time_list and named_entity[i][0] not in quantity):
+        if (named_entity[i][1] == 'ENTITY' and named_entity[i][0] not in drug_quantity and named_entity[i][
+            0] not in time_list and named_entity[i][0] not in quantity):
             if (len(data["drug_name"]) == 0):
                 data["drug_name"] = str(named_entity[i][0])
     i = 0
@@ -262,18 +267,5 @@ def prescription(text):
 
                 data["frequency"].append(freq + " " + freq_time)
         i = i + 1
-    return(prescription_processor(data))
-    # return prescription_data_processor(data)
-
-
-# name_text = "patient name is nikhil sharma he is a male and his age is 30"
-# name(name_text)
-#
-# symptom_text = "he is suffering from fever"
-# symptom(symptom_text)
-#
-# diagnosis_text = "patient is suffering from acute bronchitis"
-# diagnosis(diagnosis_text)
-
-prescription_text = "take 2 tablets of azithromycin 500 mg in morning and 1 tablet in night for 3 days"
-prescription(prescription_text)
+    print(data)
+    return (prescription_processor(data))
