@@ -5,5 +5,6 @@ Introduction : A voice to text medical transcriber which is trained on 350K biom
 
 Usage: Given in usage_instruction.pdf
 
-Instruction : 1)Install the modules from requirements.txt	
-	      2)Run app.py
+Instructions :
+1)Install the modules from requirements.txt	
+2)Run app.py
